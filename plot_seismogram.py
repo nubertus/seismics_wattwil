@@ -61,9 +61,42 @@ def read_metadata(file):
     trigger_time = metadata.get("Trigger Time", "dd.mm.yyyy hh:mm:ss")
 
     return pre_trigger_scan_count, post_trigger_scan_count, scan_rate, trigger_time, num_header_lines
+
+def on_key(event):
+    """Tastendruck: 'x' = Start, 'q' = Quit"""
+    if event.key == 'x':
+        state['selection_active'] = True
+        state['clicks'] = []
+        ax.set_title("Klicke 2 Punkte (oder 'q' zum Abbrechen)")
+        print("Punkt-Auswahl aktiviert. Klicke 2 Punkte...")
+        fig.canvas.draw()
+    elif event.key == 'q':
+        plt.close()
+
+def on_click(event):
+    """Click registrieren, wenn Auswahl aktiv ist."""
+    if not state['selection_active'] or event.inaxes != ax:
+        return
     
+    if len(state['clicks']) >= 2:
+        return
+    
+    x, y_val = event.xdata, event.ydata
+    state['clicks'].append((x, y_val))
+    
+    # Visual Feedback
+    ax.plot(x, y_val, 'ro', markersize=5)
+    fig.canvas.draw()
+    
+    print(f"Punkt {len(state['clicks'])}: ({x:.4f}, {y_val:.4f})")
+    
+    if len(state['clicks']) == 2:
+        state['selection_active'] = False
+        ax.set_title(f"Fertig! Punkte: {state['clicks']}")
+        print(f"Beide Punkte ausgewählt: {state['clicks']}")
+
 if __name__ == "__main__":
-    input_file = "2025-12-06/log00000.csv"
+    input_file = "2025-12-06/log00058.csv"
     spacing = 2         # Geophon Abstand in Metern
 
     pre_trigger_scan_count, post_trigger_scan_count, scan_rate, trigger_time, num_header_lines = read_metadata(input_file)
@@ -93,5 +126,12 @@ if __name__ == "__main__":
         # y = fft_lowpass(y, scan_rate, cutoff=100)
         
         ax.plot(t,y,color="blue")
+
+    state = {'selection_active': False, 'clicks': []}
+    clicks = []
+    fig.canvas.mpl_connect('key_press_event', on_key)
+    fig.canvas.mpl_connect('button_press_event', on_click)
+
     plt.show()
+    print("Gespeicherte Punkte:", clicks)
     
