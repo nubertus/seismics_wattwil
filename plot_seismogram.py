@@ -5,6 +5,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd 
 import numpy as np
+import math
 
 def fft_lowpass(y, fs, cutoff):
     n = len(y)
@@ -27,8 +28,6 @@ def read_metadata(file):
         - post_trigger_scan_count 
         - scan_rate
         - trigger_time (string)
-        - dt: sampling rate
-        - n: Anzahl Messdaten pro Spur 
         - num_header_lines
     """
     # Anzahl Kopfzeilen automatisch ermitteln (bis "Scan Number" gefunden wird)
@@ -62,38 +61,63 @@ def read_metadata(file):
 
     return pre_trigger_scan_count, post_trigger_scan_count, scan_rate, trigger_time, num_header_lines
 
+def slope(x1, y1, x2, y2):
+    """ Berechnet die Geradensteiung (vp) anhand zweier Punkte. """
+    return math.fabs((y2-y1)/(x2-x1))
+
 def on_key(event):
     """Tastendruck: 'x' = Start, 'q' = Quit"""
     if event.key == 'x':
         state['selection_active'] = True
         state['clicks'] = []
-        ax.set_title("Klicke 2 Punkte (oder 'q' zum Abbrechen)")
-        print("Punkt-Auswahl aktiviert. Klicke 2 Punkte...")
+        print("Klicke 2 Punkte (oder 'q' um abbzubrechen) ... ")
         fig.canvas.draw()
     elif event.key == 'q':
         plt.close()
 
 def on_click(event):
-    """Click registrieren, wenn Auswahl aktiv ist."""
+    """Click registrieren."""
     if not state['selection_active'] or event.inaxes != ax:
         return
     
     if len(state['clicks']) >= 2:
         return
     
-    x, y_val = event.xdata, event.ydata
-    state['clicks'].append((x, y_val))
+    x_pick, y_pick = event.xdata, event.ydata
+    state['clicks'].append((x_pick, y_pick))
     
     # Visual Feedback
-    ax.plot(x, y_val, 'ro', markersize=5)
-    fig.canvas.draw()
+    ax.plot(x_pick, y_pick, 'ro', markersize=5)
     
-    print(f"Punkt {len(state['clicks'])}: ({x:.4f}, {y_val:.4f})")
-    
-    if len(state['clicks']) == 2:
+    if len(state['clicks']) == 1:
+        print(f"Punkt 1: ({x_pick:.4f}, {y_pick:.4f})")
+    elif len(state['clicks']) == 2:
+        # Finale Linie zeichnen
+        if state['preview_line'] is not None:
+            state['preview_line'].remove()
+        x1, y1 = state['clicks'][0]
+        x2, y2 = state['clicks'][1]
+        ax.plot([x1, x2], [y1, y2], 'r-', linewidth=2, label='Auswahl')
         state['selection_active'] = False
-        ax.set_title(f"Fertig! Punkte: {state['clicks']}")
-        print(f"Beide Punkte ausgewählt: {state['clicks']}")
+        print(f"Punkt 2: ({x_pick:.4f}, {y_pick:.4f})")
+        print(f"vp = {slope(x1,y1,x2,y2):.0f}")
+
+    fig.canvas.draw()
+
+def on_move(event):
+    """Mausbewegung — zeichne Preview-Linie."""
+    if not state['selection_active'] or len(state['clicks']) != 1 or event.inaxes != ax:
+        return
+    
+    # Alte Preview-Linie löschen
+    if state['preview_line'] is not None:
+        state['preview_line'].remove()
+    
+    # Neue Preview-Linie zeichnen
+    x1, y1 = state['clicks'][0]
+    x2, y2 = event.xdata, event.ydata
+    state['preview_line'], = ax.plot([x1, x2], [y1, y2], 'b--', alpha=0.5, linewidth=1)
+    fig.canvas.draw_idle()  # Effizienter als draw()
 
 if __name__ == "__main__":
     input_file = "2025-12-06/log00058.csv"
@@ -127,11 +151,11 @@ if __name__ == "__main__":
         
         ax.plot(t,y,color="blue")
 
-    state = {'selection_active': False, 'clicks': []}
+    state = {'selection_active': False, 'clicks': [], 'preview_line': None}
     clicks = []
+
     fig.canvas.mpl_connect('key_press_event', on_key)
     fig.canvas.mpl_connect('button_press_event', on_click)
-
+    fig.canvas.mpl_connect('motion_notify_event', on_move)
     plt.show()
-    print("Gespeicherte Punkte:", clicks)
     
