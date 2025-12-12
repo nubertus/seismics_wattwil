@@ -61,9 +61,20 @@ def read_metadata(file):
 
     return pre_trigger_scan_count, post_trigger_scan_count, scan_rate, trigger_time, num_header_lines
 
-def slope(x1, y1, x2, y2):
-    """ Berechnet die Geradensteiung (vp) anhand zweier Punkte. """
-    return math.fabs((y2-y1)/(x2-x1))
+def linear_function(x1, y1, x2, y2):
+    """ Berechnet die Geradengleichung anhand zweier Punkte. 
+    
+        Args: 
+            x1, y1: Koordinaten des 1. Punktes
+            x2, y2: Koordinaten des 2. Punktes
+            
+        Returns:
+            m: Steigung
+            b: y-Achsenabschnitt
+    """
+    m = (y2-y1)/(x2-x1) # Steigung
+    b = y1 - m*x1       # y-Achsenabschnitt
+    return m, b
 
 def on_key(event):
     """Tastendruck: 'x' = Start, 'q' = Quit"""
@@ -100,7 +111,9 @@ def on_click(event):
         ax.plot([x1, x2], [y1, y2], 'r-', linewidth=2, label='Auswahl')
         state['selection_active'] = False
         print(f"Punkt 2: ({x_pick:.4f}, {y_pick:.4f})")
-        print(f"vp = {slope(x1,y1,x2,y2):.0f}")
+        m, b = linear_function(x1, y1, x2, y2)
+        print(f"Geradengleichung: y = {m:.1f} x + {b:.3f}")
+        print(f"vp = {m:.1f} m/s")
 
     fig.canvas.draw()
 
