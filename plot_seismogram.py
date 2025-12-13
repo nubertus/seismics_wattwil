@@ -113,7 +113,7 @@ def on_click(event):
         print(f"Punkt 2: ({x_pick:.4f}, {y_pick:.4f})")
         m, b = linear_function(x1, y1, x2, y2)
         print(f"Geradengleichung: y = {m:.1f} x + {b:.3f}")
-        print(f"vp = {m:.1f} m/s")
+        print(f"vp = {math.fabs(m):.1f} m/s")
 
     fig.canvas.draw()
 

@@ -4,8 +4,8 @@
 - [x] Daten sichten: Musterseismogramm aussuchen
 - [x] Gerade speichern
 - [ ] Dokumentation: Anleitung für User (README.md)
-- [ ] Fenster-Titel: Dateiname
-- [ ] Überschrift: Trigger Time
+- [x] Fenster-Titel: Dateiname
+- [x] Überschrift: Trigger Time
 - [ ] xc herauslesen
 
 ## nice to have's
@@ -13,3 +13,4 @@
 - [ ] Zeitbereich manuell auswählen
 - [ ] Menüführung per Tastendruck
 - [ ] Filter
+- [ ] zusätzliche Features definieren
