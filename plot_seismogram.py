@@ -163,6 +163,9 @@ if __name__ == "__main__":
         # y = fft_lowpass(y, scan_rate, cutoff=100)
         
         ax.plot(t,y,color="blue")
+    
+    fig.suptitle(input_file)
+    ax.set_title(trigger_time)
 
     state = {'selection_active': False, 'clicks': [], 'preview_line': None}
     clicks = []
