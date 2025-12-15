@@ -112,7 +112,7 @@ def on_click(event):
         state['selection_active'] = False
         print(f"Punkt 2: ({x_pick:.4f}, {y_pick:.4f})")
         m, b = linear_function(x1, y1, x2, y2)
-        print(f"Geradengleichung: y = {m:.1f} x + {b:.3f}")
+        print(f"Geradengleichung: x = {m:.1f} t + {b:.3f}")
         print(f"vp = {math.fabs(m):.1f} m/s")
 
     fig.canvas.draw()
@@ -133,7 +133,7 @@ def on_move(event):
     fig.canvas.draw_idle()  # Effizienter als draw()
 
 if __name__ == "__main__":
-    input_file = "2025-12-06/log00058.csv"
+    input_file = "2025-12-06/log00082.csv"
     spacing = 2         # Geophon Abstand in Metern
 
     pre_trigger_scan_count, post_trigger_scan_count, scan_rate, trigger_time, num_header_lines = read_metadata(input_file)
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     # Daten einlesen (ab der Zeile nach den Kopfzeilen)
     data = pd.read_csv(input_file, skiprows=num_header_lines, encoding='latin-1')
     data.columns = ["Scan Number", "Scan Time", "AI0", "AI1", "AI2", "AI3", "AI4", "AI5", "AI6", "AI7"] # Spaltennamen
-    # print(data.head(10))
+    print(data.head(10))
 
     dt = 1/scan_rate
     tmin = -pre_trigger_scan_count*dt
