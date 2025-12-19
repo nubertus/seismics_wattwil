@@ -3,16 +3,19 @@
 - [x] Pretrigger
 - [x] Daten sichten: Musterseismogramm aussuchen
 - [x] Gerade speichern
-- [ ] Dokumentation: Anleitung für User (README.md)
+- [x] Dokumentation: Anleitung für User (README.md)
 - [x] Fenster-Titel: Dateiname
 - [x] Überschrift: Trigger Time
-- [ ] xc herauslesen
 - [x] x und y in Geradengleichung umbenennen
+- [ ] xc herauslesen/berechnen
 
 ## nice to have's
 
-- [ ] Überschrift: 
+- [x] Überschriften: Dateiname, Shot Time
+- [x] Filter: low pass, moving average 
+- [ ] zweite Gerade aus demselben Seismogramm picken
+- [ ] xc picken
+- [ ] statt Dateiname Ordner mit allen Seismogrammen eingeben -> mit Pfeiltasten von einem zum nächsten wechseln
+- [ ] Verstärkung per Tastendruck vergrössern (-> zu grosse Ausschläge clippen)
 - [ ] Menüführung per Tastendruck
-- [ ] Filter
-- [ ] zusätzliche Features definieren
-- [ ] Ausführung vom Programm trennen (z. B. über args)
+- [ ] Ausführung vom Programm trennen (z. B. über args, config-Datei)

@@ -8,6 +8,15 @@ import numpy as np
 import math
 
 def fft_lowpass(y, fs, cutoff):
+    """
+    filtert hochfrequentes Rauschen aus den Daten
+    
+    :param y: Zeitreihe
+    :param fs: sampling rate
+    :param cutoff: Grenze, oberhalb welcher Signale raus gefiltert werden
+
+    claude.ai
+    """
     n = len(y)
     Y = np.fft.rfft(y)
     freqs = np.fft.rfftfreq(n, d=1/fs)
